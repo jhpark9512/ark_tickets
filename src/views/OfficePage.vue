@@ -21,6 +21,16 @@
 </template>
 <script lang="ts" setup>
 import SearchBarComponent from '../components/SearchBarComponent.vue';
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const officeName = ref<string | null>(route.params.id as string);
+
+console.log(officeName.value)
+
+
+
 </script>
 <style scoped>
 .container {

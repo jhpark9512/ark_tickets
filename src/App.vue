@@ -48,13 +48,13 @@ import SideBarComponent from './components/SideBarComponent.vue';
 
 .custom-footer{
   background-color: #ececec;
-  padding: 20px;
+  padding: 0px;
   text-align: center;
   position: fixed; /* 푸터를 고정 */
   bottom: 0; /* 화면의 하단에 고정 */
   left: 0;
   width: 100%; /* 화면 전체 너비 */
-  height: 60px; /* 푸터 높이 */
+  height: 40px; /* 푸터 높이 */
   z-index: 1000; /* 다른 요소 위에 보이도록 */
 }
 </style>

@@ -11,9 +11,9 @@
         mode="horizontal"
         :style="{ lineHeight: '64px' }"
       >
-        <a-menu-item key="1">nav 1</a-menu-item>
-        <a-menu-item key="2">nav 2</a-menu-item>
-        <a-menu-item key="3">nav 3</a-menu-item>
+        <a-menu-item key="1" @click="goToUserPage">식권사용</a-menu-item>
+        <a-menu-item key="2" @click="goToAdminMain">식권통계</a-menu-item>
+        <a-menu-item key="3" @click="goToInsertTickets">식권등록</a-menu-item>
       </a-menu>
     </a-layout-header>
   </a-layout>
@@ -21,7 +21,21 @@
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 const selectedKeys = ref<string[]>(['2']);
+
+const goToInsertTickets = () => {
+  router.push('/InsertTickets');
+}
+const goToAdminMain = () => {
+  router.push('/AdminMain');
+}
+const goToUserPage = () => {
+  router.push('/UserPage');
+}
+
 </script>
 <style scoped>
 

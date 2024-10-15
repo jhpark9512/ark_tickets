@@ -1,7 +1,7 @@
 <template>
     <div class="content-area">
         <div class="card-container" style="background-color: #ececec; padding: 20px;">
-        <CardComponent :ticketAmount="ticketAmount"/>
+        <CardComponent :ticketAmount="ticketAmount" @click="moveToOffice"/>
         </div>
         <br/>
     </div>
@@ -12,9 +12,16 @@ import { ref, onMounted } from 'vue';
 import { OfficeTicketAmount } from '../types/tickets';
 import CardComponent from '../components/CardComponent.vue';
 import TabComponent from '../components/TabComponent.vue';
+import { useRouter } from 'vue-router';
 
-const ticketAmount = ref();
+const router = useRouter();
+const ticketAmount = ref(<OfficeTicketAmount[]>([]));
 
+const moveToOffice = (office:OfficeTicketAmount) =>{
+    router.push({name: 'OfficePage', params: {id: office.ot_office_name}});
+}
+
+//사무실별 잔여 식권 개수
 const officeAmounts = async () =>{
     try{
         const response = await fetch('/api/office-ticket-amount');

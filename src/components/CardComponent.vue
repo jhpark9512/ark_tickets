@@ -1,8 +1,8 @@
 <template>
         <a-row :gutter="16">
-            <a-col v-for="(amount, index) in ticketAmount" :key="index" class="card" :span="6">
-                <a-card style="text-align: center; " :title="amount.ot_office_name" :bordered="false">
-                    <p style="text-align: center;">{{amount.ot_ticket_quantity}}장</p>
+            <a-col v-for="(office, index) in ticketAmount" :key="index" class="card" :span="6">
+                <a-card style="text-align: center; " :title="office.ot_office_name" :bordered="false" @click="handleClick(office)">
+                    <p style="text-align: center;">{{office.ot_ticket_quantity}}장</p>
                 </a-card>
             </a-col>
         </a-row>
@@ -13,6 +13,13 @@ import { OfficeTicketAmount } from '../types/tickets';
 const props = defineProps<{
   ticketAmount: OfficeTicketAmount[]
 }>();
+
+const emit = defineEmits();
+
+const handleClick = (office: OfficeTicketAmount) =>{
+    emit('click', office)
+}
+
 </script>
 <style scoped>
 .card-container {

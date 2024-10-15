@@ -17,7 +17,7 @@ const routes: Array<RouteRecordRaw> = [
         component: AdminMain
       },
       {
-        path: '/OfficePage',
+        path: '/OfficePage/:id',
         name: 'OfficePage',
         component: OfficePage
       },

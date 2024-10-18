@@ -4,6 +4,13 @@ export interface OfficeTicketAmount {
     ot_office_name: string;
     ot_ticket_quantity: number;
 }
+
+export interface OfficeData {
+    o_office_id: string;
+    o_company_name: string;
+    o_ticket_quantity: number;
+}
+
 //식권 구매 양식
 export interface PurchaseData {
     p_purchase_id: number;

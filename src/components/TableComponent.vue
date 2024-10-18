@@ -8,6 +8,12 @@
         <template v-if="column.key ==='button'">
           <slot name="button" :record="record"></slot>
         </template>
+        <template v-if="column.key === 'PorNot'">
+          <slot name="PorNot" :record="record"></slot>
+        </template>
+        <template v-if="column.key === 'UorNot'">
+          <slot name="UorNot" :record="record"></slot>
+        </template>
       </template>
     </a-table>
     <div class="pagination">

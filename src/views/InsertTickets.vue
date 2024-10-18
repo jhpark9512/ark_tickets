@@ -173,7 +173,6 @@ const getPurchaseList = async (pageNum: number) => {
       p_purchase_date: formatDate(item.p_purchase_date),
     }));
     total.value = data[0].total_count;
-    console.log(purchaseList.value)
   } catch (error) {
     console.log('Error fetching officeAmounts:', error);
   }

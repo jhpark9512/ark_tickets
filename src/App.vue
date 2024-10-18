@@ -4,7 +4,7 @@
         <NavigationBarComponent />
     </a-layout>
     <a-layout class="layout">
-        <SideBarComponent/>
+        <!-- <SideBarComponent/> -->
       <a-layout-content class="custom-content">
         <br/>
         <router-view></router-view>

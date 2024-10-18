@@ -24,14 +24,12 @@ const moveToOffice = (office:OfficeTicketAmount) =>{
 //사무실별 잔여 식권 개수
 const officeAmounts = async () =>{
     try{
-        const response = await fetch('/api/office-ticket-amount');
+        const response = await fetch('/api/office_ticket_list');
         if(!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data: OfficeTicketAmount[] = await response.json();
-        console.log(data)
         ticketAmount.value = data;
-        console.log(ticketAmount.value)
     } catch (error){
         console.log('Error fetching officeAmounts:', error);
     }

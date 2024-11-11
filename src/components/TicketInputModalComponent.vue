@@ -26,7 +26,7 @@
     <template #footer>
       <div style="text-align: center;">
         <a-button type="primary" @click="handleSubmit">지급</a-button>
-        <a-button danger @click="open = false">취소</a-button>
+        <a-button danger @click="open = false">닫기</a-button>
       </div>
     </template>
   </a-modal>
@@ -49,6 +49,7 @@ const open = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
 const form = ref<{ selection: string | null; input_quantity: number | null }>({ selection: null, input_quantity: null });
 const value = ref<Dayjs>(dayjs());
+const office = props.office;
 const onDateChange = (date: Dayjs) => {
   console.log(date.format('YYYY-MM-DD'))
 }
@@ -69,6 +70,7 @@ const handleSubmit = async () => {
     ticketType: true,
   }
   console.log(submitData)
+  //식권불출기록 등록 api호출
   try {
     const response = await fetch('/api/transfer_tickets', {
       method: 'POST',

@@ -31,19 +31,23 @@ const props = defineProps<{
   data: any[];
 }>();
 const tableData = ref([props.data]);
+
 const currentPageNum = ref(1);
 const total = ref(props.total);
-const pageNumber = defineEmits(['handleClick']);
 
+const pageNumber = defineEmits(['handleClick']);
 const handleClick = (pageNum: number) => {
   currentPageNum.value = pageNum;
   console.log(pageNum);
   pageNumber('handleClick', pageNum);
 }
-
 watch(() => props.data, (newData) => {
   tableData.value = [...newData];
 });
+watch(()=> props.total, (newTotal)=>{
+  total.value = newTotal;
+})
+
 </script>
 <style scoped>
 .table-container {

@@ -1,7 +1,11 @@
 import { Request, Response } from 'express';
 import pool from "../database/db";
 import { UsageParams, TransferTickets, PaggingTicketIssu } from '../types/ticketUsage';
-
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import { config } from 'dotenv';
+import { message } from 'ant-design-vue';
+config();
 //ticket테이블 조회
 export const getTickets = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -21,6 +25,7 @@ export const purchasePaging = async (req: Request, res: Response): Promise<void>
     const pageNum = parseInt(req.query.pageNum as string, 10) || 1;
 
     const validPage = Math.max(pageNum, 1);
+    console.log('페이지번호 : ' + pageNum);
 
     const result = await pool.query('SELECT * FROM paging_purchase($1)', [validPage]);
     res.json(result.rows);
@@ -114,6 +119,7 @@ export const getOfficeUsageList = async (req: Request, res: Response): Promise<v
         queryParams.usageType
       ]);
     res.json(result.rows);
+    console.log(result)
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
@@ -135,14 +141,78 @@ export const transferTickets = async (req: Request, res: Response): Promise<void
 }
 
 //사무실 식권 지급기록 조회 api
-export const paggingTicketIssu = async (req: Request, res: Response): Promise<void> => {
-  const {pageNum, officeName}: PaggingTicketIssu = req.body;
-  
+export const pagingTicketIssu = async (req: Request, res: Response): Promise<void> => {
+  const { pageNum, officeName }: PaggingTicketIssu = req.body;
+  console.log(pageNum);
   try {
-    const result = await pool.query('SELECT * FROM paging_issu($1, $2)', [pageNum,officeName]);
+    const result = await pool.query('SELECT * FROM paging_issu($1, $2)', [pageNum, officeName]);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
+  }
+}
+
+//사무실 식권 회수 api
+export const recallTickets = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { issu_id, issu_type } = req.body as {
+      issu_id: number;
+      issu_type: boolean
+    };
+    const result = await pool.query('SELECT * FROM update_issuances($1, $2);', [issu_id, issu_type]);
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: '구매 내역을 찾을 수 없습니다.' });
+      return;
+    }
+
+    res.status(200).json({ message: '구매 내역이 취소되었습니다.', data: result.rows[0] });
+  } catch (error) {
+    console.error('Error creating ticket purchase:', error);
+    res.status(500).json({ error: '구매 내역을 수정하는데 실패했습니다.' });
+  }
+};
+
+//로그인
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { userId, password } = req.body as {
+      userId: string;
+      password: string;
+    };
+    console.log(userId, password);
+    const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [userId]);
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: '사용자 ID가 존재하지 않습니다.' });
+    }
+    const user = result.rows[0];
+    if (user.user_pw !== password) {
+      return res.status(401).json({ message: '비밀번호가 일치하지 않습니다' });
+    }
+    const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+    return res.status(200).json({ user_id: user.user_id, user_auth: user.user_auth, token });
+  } catch (error) {
+    console.error('Error during login:', error);
+    return res.status(500).json({ error: '로그인에 실패했습니다.' });
+  }
+};
+
+/*사용자 페이지 관련 api*/
+
+//사용자 식권 사용내역
+
+export const userUsage = async (req: Request, res: Response) => {
+  try {
+    const {userId, year, month} = req.body as { userId: string, year: number, month: number };
+    const result = await pool.query('SELECT * FROM user_ticket_usage($1, $2, $3)', [userId, year, month]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '구매 내역을 찾을 수 없습니다.' });
+    }
+    return res.status(200).json(result.rows)
+  } catch (error) {
+    console.error('에러발생', error)
+    return res.status(500).json({ message: 'Server Error.' })
   }
 }

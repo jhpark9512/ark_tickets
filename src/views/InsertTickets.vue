@@ -1,5 +1,5 @@
 <template>
-  <div class="form-container">
+  <div>
     <a-form :model="formState" name="inputTicketPurchase" :label-col="{ span: 8 }" :wrapper-col="{ span: 6 }"
       autocomplete="off" @finish="InsertPurchaseData" @finishFailed="InsertFailed">
       <a-form-item label="구매일" name="input_date" :rules="[{ required: true, message: '구매일을 입력해주세요!' }]">
@@ -161,9 +161,9 @@ const DeletePurchaseData = async (record: PurchaseData) => {
 
 
 //식권구매내역 리스트 호출
-const getPurchaseList = async (pageNum: number) => {
+const getPurchaseList = async (pageNumber: number) => {
   try {
-    const response = await fetch(`/api/purchase/paging?pageNum=${pageNum}`);
+    const response = await fetch(`/api/purchase/paging?pageNum=${pageNumber}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -208,5 +208,5 @@ onMounted(() => {
 
 </script>
 <style scoped>
-.form-container {}
+
 </style>

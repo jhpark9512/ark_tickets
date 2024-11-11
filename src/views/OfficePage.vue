@@ -11,7 +11,7 @@
             </div>
             <div class="button-area">
                 <TicketInputModalComponent :office="office" :officeData="officeData" @update-tickets="updateTickets"/>
-                <TicketUpdateModalCompnent :office="office"/>
+                <TicketUpdateModalCompnent :office="office" @update-tickets="updateTickets2"/>
             </div>
         </div>
         <div class="bottom">
@@ -21,7 +21,7 @@
                 </p>
             </div>
             <div class="table-area">
-                <TableComponent :columns="columns" :data="usageData" :current="current" :total="total">
+                <TableComponent :columns="columns" :data="usageData" :current="current" :total="total" @handle-click="getOfficeUsage">
                     <template #UorNot="{ record }">
                 <template v-if="record.usage_type === true">
                     <span>사용</span>
@@ -58,7 +58,6 @@ const totalTicketQuantity = computed(() => {
     return officeData.value.reduce((sum, office) => sum + office.o_ticket_quantity, 0);
 });
 
-const pageNum = ref<number>(1);
 const officeName = ref<string>(office.value);
 const usedDate = ref<string | null>(null);
 const userName = ref<string | null>(null);
@@ -104,7 +103,9 @@ const columns: ColumnType[] = [
         dataIndex: 'usage_type',
         key: 'UorNot',
     },
-]
+];
+
+
 const updateTickets = (companyName: string, quantity: number) => {
   const office = officeData.value.find(o => o.o_company_name === companyName);
   if (office) {
@@ -112,6 +113,9 @@ const updateTickets = (companyName: string, quantity: number) => {
   }
 };
 
+const updateTickets2 = (office:string) =>{
+    getOfficeTicketAmount(office)
+}
 
 const formatDate = (timestamp: string): string => {
     return dayjs(timestamp).format('YYYY년 MM월 DD일');
@@ -122,21 +126,22 @@ const formatDate = (timestamp: string): string => {
 //사무실 식권개수 정보
 const getOfficeTicketAmount = async (officeName: string) => {
     try {
-        const response = await fetch(`/api/office_ticket_amount?officeName=${officeName}`);
+        const response = await fetch(`/api/read_office_ticket_amount?officeName=${officeName}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data: OfficeData[] = await response.json();
         officeData.value = data;
+        console.log(officeData.value)
     } catch (error) {
         console.log('Error fetching officeAmounts:', error);
     }
 }
 // 식권 사용기록
-const getOfficeUsage = async () => {
+const getOfficeUsage = async (pageNumber: number) => {
     try {
         const queryParams = new URLSearchParams({
-            pageNum: pageNum.value.toString(),
+            pageNum: pageNumber.toString(),
             officeName: officeName.value || '',
             usedDate: usedDate.value || '',
             userName: userName.value || '',
@@ -152,8 +157,11 @@ const getOfficeUsage = async () => {
         const data: ticketUsage[] = await response.json();
         usageData.value = data.map((item: ticketUsage) => ({
             ...item,
-            used_date: formatDate(item.useDate)
+            used_date: formatDate(item.used_date)
         }));
+        
+
+        total.value = data[0].total_count;
     } catch (error) {
         console.error('API fetch error:', error);
     }
@@ -161,7 +169,7 @@ const getOfficeUsage = async () => {
 
 onMounted(() => {
     getOfficeTicketAmount(office.value);
-    getOfficeUsage();
+    getOfficeUsage(current.value);
 })
 
 

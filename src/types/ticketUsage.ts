@@ -9,13 +9,14 @@ export interface UsageParams {
 }
 
 export interface ticketUsage {
-    pageNum : Number;
-    officeName : string;
-    useDate : string;
-    userName : string;
-    userDepartment : string;
-    usageTime : string;
-    usageType : boolean;
+    page_num : Number;
+    office_name : string;
+    used_date : string;
+    user_name : string;
+    user_department : string;
+    usage_time : string;
+    usage_type : boolean;
+    total_count : number;
 }
 
 export interface TransferTickets {
@@ -37,4 +38,5 @@ export interface TicketIssuList {
     issu_company_name: string;
     issu_quantity: number;
     issu_type: boolean;
+    total_count: number;
 }

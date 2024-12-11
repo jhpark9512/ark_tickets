@@ -15,4 +15,7 @@ router.post('/paging_ticket_issu', api.pagingTicketIssu)
 router.post('/recallTickets', api.recallTickets)
 router.post('/login', api.login)
 router.post('/user_usages', api.userUsage)
+router.post('/insert_usage', api.insertUsage)
+router.post('/check_usage',api.checkUsage)
+router.post('/update_ticket_usages',api.updateUsage)
 export default router;

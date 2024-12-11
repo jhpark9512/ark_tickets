@@ -204,9 +204,9 @@ export const login = async (req: Request, res: Response) => {
 
 export const userUsage = async (req: Request, res: Response) => {
   try {
-    const {userId, year, month} = req.body as { userId: string, year: number, month: number };
+    const { userId, year, month } = req.body as { userId: string, year: number, month: number };
     const result = await pool.query('SELECT * FROM user_ticket_usage($1, $2, $3)', [userId, year, month]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: '구매 내역을 찾을 수 없습니다.' });
     }
@@ -214,5 +214,48 @@ export const userUsage = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('에러발생', error)
     return res.status(500).json({ message: 'Server Error.' })
+  }
+}
+//식권 사용기록 등록
+export const insertUsage = async (req: Request, res: Response) => {
+  try {
+    const { userId, usedDate, usedTime, usedType } = req.body as { userId: string, usedDate: string, usedTime: string, usedType: boolean };
+    const result = await pool.query('SELECT * FROM insert_ticket_usage($1, $2, $3, $4)', [userId, usedDate, usedTime, usedType]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '사용기록을 등록 할수 없습니다.' });
+    }
+    res.status(201).json({ message: '사용기록이 등록되었습니다.', data: result.rows[0] });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: '사용기록을 등록하는데 실패했습니다.' });
+  }
+}
+//식권 사용 중복 검사
+export const checkUsage = async (req: Request, res: Response) => {
+  try {
+    const { userId, usedDate, usedTime, usedType } = req.body as { userId: string, usedDate: string, usedTime: string, usedType: boolean };
+    const result = await pool.query('SELECT * FROM check_usage_data($1, $2, $3, $4)', [userId, usedDate, usedTime, usedType]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '요청에 실패했습니다.' });
+    }
+    res.status(201).json({ message: '사용기록이 등록되었습니다.', data: result.rows[0] });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: '서버에 에러가 발생했습니다.' });
+  }
+}
+
+//식권 사용기록 수정
+export const updateUsage = async (req: Request, res: Response) => {
+  try {
+    const { usageId, usedType } = req.body as { usageId: number, usedType: boolean };
+    const result = await pool.query('SELECT * FROM update_ticket_usages($1, $2)', [usageId, usedType]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '사용기록을 수정 할수 없습니다.' });
+    }
+    res.status(201).json({ message: '사용기록이 수정되었습니다.', data: result.rows[0] });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: '사용기록을 수정하는데 실패했습니다.' });
   }
 }

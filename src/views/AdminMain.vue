@@ -13,7 +13,6 @@ import { OfficeTicketAmount } from '../types/tickets';
 import CardComponent from '../components/CardComponent.vue';
 import TabComponent from '../components/TabComponent.vue';
 import { useRouter } from 'vue-router';
-
 const router = useRouter();
 const ticketAmount = ref(<OfficeTicketAmount[]>([]));
 

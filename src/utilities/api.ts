@@ -259,3 +259,19 @@ export const updateUsage = async (req: Request, res: Response) => {
     res.status(500).json({ error: '사용기록을 수정하는데 실패했습니다.' });
   }
 }
+
+/* 통계기능 */
+export const yearUsage = async (req: Request, res: Response) => {
+  try {
+    const { yearInput } = req.body as { yearInput: number};
+    const result = await pool.query('SELECT * FROM get_year_usage_count($1)', [yearInput]);
+    console.log(result)
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '요청이 잘못되었습니다.' });
+    }
+    res.status(201).json({ message: 'Success.', data: result.rows });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: '데이터를 불러오는데 실패했습니다.' });
+  }
+}

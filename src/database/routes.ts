@@ -18,4 +18,5 @@ router.post('/user_usages', api.userUsage)
 router.post('/insert_usage', api.insertUsage)
 router.post('/check_usage',api.checkUsage)
 router.post('/update_ticket_usages',api.updateUsage)
+router.post('/usage_statistics',api.yearUsage)
 export default router;

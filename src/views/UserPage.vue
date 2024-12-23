@@ -90,7 +90,7 @@ const usedDates = computed(() => {
 
 const getEvents = (current: Dayjs) => {
     const formattedCurrentDate = current.format('YYYY-MM-DD');
-    const eventList =  usedDates.value.filter(event => event.date === formattedCurrentDate);
+    const eventList = usedDates.value.filter(event => event.date === formattedCurrentDate);
     return eventList.filter(event => event.type !== false);
 };
 
@@ -129,7 +129,7 @@ const formattedSelectedDate = computed(() => {
 
 const getMealUsage = (time: string) => {
     const formattedDate = formattedSelectedDate.value;
-    const mealRecord = usedDates.value.find(event => event.date === formattedDate && event.time === time);
+    const mealRecord = usedDates.value.find(event => event.date === formattedDate && event.time === time && event.type);
     return mealRecord ? '사용완료' : '미사용';
 };
 
@@ -198,33 +198,42 @@ const registerUsage = async () => {
 const cancelTicketUsage = async (mealTime: string) => {
     const foundUsage = userData.value.find(item =>
         item.u_usage_used_date === formattedSelectedDate.value &&
-        item.u_usage_used_time === mealTime
+        item.u_usage_used_time === mealTime &&
+        item.u_usage_type === true
     );
 
     let usageIndex = foundUsage?.u_usage_id
-    
-    const updateData = {
-        usageId: usageIndex,
-        usedType: false
-    };
-    try {
-        const response = await fetch('/api/update_ticket_usages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updateData)
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error('error :', errorData.error);
-            throw new Error(errorData.error);
+    if (usageIndex === undefined) {
+        alert('식권사용기록이 없습니다')
+    } else {
+        const isConfirmed = confirm('식권 사용을 취소하시겠습니까?');
+        if(!isConfirmed){
+            return;
         }
-        const result = await response.json();
-        console.log('사용기록이 수정되었습니다 : '+result)
-        userUsage(userId, selectedYear.value, selectedMonth.value);
-    } catch (error) {
-        console.error('사용기록 등록 중 오류 발생', error);
+        console.log(usageIndex)
+        const updateData = {
+            usageId: usageIndex,
+            usedType: false
+        };
+        try {
+            const response = await fetch('/api/update_ticket_usages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updateData)
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('error :', errorData.error);
+                throw new Error(errorData.error);
+            }
+            const result = await response.json();
+            console.log('사용기록이 수정되었습니다 : ' + result.value)
+            userUsage(userId, selectedYear.value, selectedMonth.value);
+        } catch (error) {
+            console.error('사용기록 등록 중 오류 발생', error);
+        }
     }
 }
 

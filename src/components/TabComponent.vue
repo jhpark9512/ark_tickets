@@ -1,10 +1,9 @@
 <template>
   <a-tabs v-model:activeKey="activeKey">
-    <a-tab-pane key="1" tab="Tab 1">
+    <a-tab-pane key="1" tab="년도별 통계">
       <ChartComponent/>
     </a-tab-pane>
     <a-tab-pane key="2" tab="Tab 2" force-render>월별통계</a-tab-pane>
-    <a-tab-pane key="3" tab="Tab 3">일별통계</a-tab-pane>
   </a-tabs>
 </template>
 <script lang="ts" setup>

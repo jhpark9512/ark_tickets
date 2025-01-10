@@ -207,7 +207,7 @@ const cancelTicketUsage = async (mealTime: string) => {
         alert('식권사용기록이 없습니다')
     } else {
         const isConfirmed = confirm('식권 사용을 취소하시겠습니까?');
-        if(!isConfirmed){
+        if (!isConfirmed) {
             return;
         }
         console.log(usageIndex)
@@ -238,7 +238,12 @@ const cancelTicketUsage = async (mealTime: string) => {
 }
 
 const handleSubmit = () => {
-    registerUsage(); // API 호출
+    let result = confirm('식권을 사용하시겠습니까?')
+    if (result) {
+        registerUsage(); // API 호출
+    } else {
+        return;
+    }
 };
 
 onMounted(() => {

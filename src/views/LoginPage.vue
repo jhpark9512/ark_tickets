@@ -13,8 +13,11 @@
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
             <a-button type="primary" html-type="submit">로그인</a-button>
+            &emsp;
+            <a-button type="primary" @click="goToRegisterPage">회원가입</a-button>
         </a-form-item>
     </a-form>
+
 </template>
 <script lang="ts" setup>
 import { reactive } from 'vue';
@@ -35,43 +38,46 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const submitLoginData = async (values: FormState) => {
-    console.log('Success:', values.username);
-    console.log('Success:', values.password);
 
-        try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    userId: values.username,
-                    password: values.password,
-                }),
-            });
-            console.log(response)
-            if (!response.ok) {
-                throw new Error('Login Failed');
-          }
-            const result = await response.json();
-            const {user_id,user_auth, token} = result
-            console.log('로그인이 완료되었습니다, 토큰: ' ,result.userId,result.user_auth, result.token)
-            authStore.login(user_id,token, user_auth);
-
-            console.log(user_auth)
-            if(user_auth === '사용자'){
-                router.push(`/UserPage/${user_id}`);
-            } else if(user_auth === '관리자'){
-                router.push('/Admin/AdminMain')
-            } else {
-                console.log('에러')
-            }
-
-        } catch (error) {
-            console.error('Error :', error);
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: values.username,
+                password: values.password,
+            }),
+        });
+        console.log(response)
+        if (!response.ok) {
+            alert('아이디 또는 비밀번호가 잘못되었습니다')
+            throw new Error('Login Failed');
         }
-    };
-    
+        const result = await response.json();
+        const { user_id, user_auth, user_name, token } = result
+        console.log(result)
+        console.log('로그인이 완료되었습니다, 토큰: ',result.token , result.userId, result.user_auth, result.user_name, )
+        authStore.login(user_id, token, user_auth, user_name);
+
+        console.log(user_auth)
+        if (user_auth === '사용자') {
+            router.push(`/UserPage/${user_id}`);
+        } else if (user_auth === '관리자') {
+            router.push('/Admin/AdminMain')
+        } else {
+            console.log('에러')
+        }
+
+    } catch (error) {
+        console.error('Error :', error);
+    }
+};
+
+const goToRegisterPage = () => {
+    router.push('/RegisterPage')
+}
 
 const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);

@@ -10,11 +10,16 @@
           <a-menu-item key="3" @click="goToInsertTickets">식권등록</a-menu-item>
           <a-menu-item key="2" @click="goToAdminMain">식권통계</a-menu-item>
         </a-menu>
+        <div class="text">
+          <span v-if="isLoggedIn">
+            {{authStore.userName}}님 환영합니다 ({{authStore.role}})
+          </span>
+        </div>
         <a-button 
       danger 
       type="primary" 
       class="logout-button" 
-      :class="{ visible: isLoggedIn }" 
+      :class="{ visible: isLoggedIn }"
       key="logout" 
       @click="logout">
       로그아웃
@@ -75,6 +80,7 @@ const goToAdminMain = () => {
   router.push('/Admin/AdminMain');
 }
 
+
 onMounted(() => {
   authStore.checkAuth(); // 인증 상태 확인
   isLoggedIn.value = authStore.isAuthenticated; // 상태 업데이트
@@ -133,5 +139,9 @@ onMounted(() => {
   background: #fff;
 }
 
+.text{
+  color: white;
+  margin-left: auto;
+}
 
 </style>

@@ -4,7 +4,7 @@ import { UsageParams, TransferTickets, PaggingTicketIssu } from '../types/ticket
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
-import { message } from 'ant-design-vue';
+import { hash } from 'crypto';
 config();
 //ticket테이블 조회
 export const getTickets = async (req: Request, res: Response): Promise<void> => {
@@ -174,7 +174,7 @@ export const recallTickets = async (req: Request, res: Response): Promise<void> 
   }
 };
 
-//로그인
+
 export const login = async (req: Request, res: Response) => {
   try {
     const { userId, password } = req.body as {
@@ -182,16 +182,25 @@ export const login = async (req: Request, res: Response) => {
       password: string;
     };
     console.log(userId, password);
+
+    // 사용자 정보를 데이터베이스에서 조회
     const result = await pool.query('SELECT * FROM users WHERE user_id = $1', [userId]);
     if (result.rows.length === 0) {
       return res.status(401).json({ message: '사용자 ID가 존재하지 않습니다.' });
     }
+
     const user = result.rows[0];
-    if (user.user_pw !== password) {
-      return res.status(401).json({ message: '비밀번호가 일치하지 않습니다' });
+    // 비밀번호 비교
+    const isPasswordValid = await bcrypt.compare(password, user.user_pw);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: '비밀번호가 일치하지 않습니다.' });
     }
+
+    // JWT 토큰 생성
     const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-    return res.status(200).json({ user_id: user.user_id, user_auth: user.user_auth, token });
+    console.log(user)
+    console.log(token)
+    return res.status(200).json({ user_id: user.user_id, user_auth: user.user_auth, user_name: user.user_name, token });
   } catch (error) {
     console.error('Error during login:', error);
     return res.status(500).json({ error: '로그인에 실패했습니다.' });
@@ -263,8 +272,8 @@ export const updateUsage = async (req: Request, res: Response) => {
 /* 통계기능 */
 export const yearUsage = async (req: Request, res: Response) => {
   try {
-    const { yearInput } = req.body as { yearInput: number};
-    const result = await pool.query('SELECT * FROM get_year_usage_count($1)', [yearInput]);
+    const { companyId, yearInput } = req.body as { companyId: string, yearInput: number };
+    const result = await pool.query('SELECT * FROM get_year_usage_count($1, $2)', [companyId, yearInput]);
     console.log(result)
     if (result.rows.length === 0) {
       return res.status(404).json({ error: '요청이 잘못되었습니다.' });
@@ -275,3 +284,49 @@ export const yearUsage = async (req: Request, res: Response) => {
     res.status(500).json({ error: '데이터를 불러오는데 실패했습니다.' });
   }
 }
+//회원가입
+export const registerUser = async (req: Request, res: Response) => {
+  try {
+    const {
+      userId,
+      password,
+      companyId,
+      username,
+      userAuth,
+      officeId,
+      department
+    } = req.body as {
+      userId: string,
+      password: string,
+      companyId: string,
+      username: string,
+      userAuth: string,
+      officeId: string,
+      department: string
+    };
+    console.log(userId,
+      password,
+      companyId,
+      username,
+      userAuth,
+      officeId,
+      department)
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    
+    const result = await pool.query(
+      'SELECT * FROM register_users($1, $2, $3, $4, $5, $6, $7)',
+      [userId, hashedPassword, companyId, username, userAuth, officeId, department]
+    );
+    console.log(result)
+    // 데이터베이스 쿼리 결과 검증
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: '요청이 잘못되었습니다.' });
+    }
+
+    res.status(201).json({ message: 'Success.', data: result.rows });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: '데이터를 불러오는데 실패했습니다.' });
+  }
+};

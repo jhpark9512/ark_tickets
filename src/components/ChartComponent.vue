@@ -38,7 +38,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 // 반응형 데이터 및 참조 정의
 const company = ['ark_account', 'ark_it'];
-const yearInput = ref<number>(2024);
+const yearInput = ref<number>(2025);
 const loaded = ref<boolean>(false);
 const chartData = ref({
   labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],

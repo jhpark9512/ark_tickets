@@ -50,7 +50,8 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+//to, from, next 중 from을 안쓰더라도 매개변수는 있어야함 , _로 생략 가능
+router.beforeEach((to, _, next) => {
   const token = localStorage.getItem('token'); // 로컬 스토리지에서 토큰 확인
   const role = localStorage.getItem('role'); // 로컬 스토리지에서 역할 확인
   const userId = localStorage.getItem('userId');

@@ -13,5 +13,5 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''), // 경로 재작성 (선택적)
       },
     },
-  }
+  },
 })

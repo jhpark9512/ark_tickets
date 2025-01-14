@@ -13,7 +13,7 @@ import { OfficeTicketAmount } from '../types/tickets';
 const props = defineProps<{
   ticketAmount: OfficeTicketAmount[]
 }>();
-
+console.log(props)
 const emit = defineEmits();
 
 const handleClick = (office: OfficeTicketAmount) =>{

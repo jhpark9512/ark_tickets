@@ -4,12 +4,13 @@ import { UsageParams, TransferTickets, PaggingTicketIssu } from '../types/ticket
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
-import { hash } from 'crypto';
+
 config();
 //ticket테이블 조회
 export const getTickets = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await pool.query('SELECT * FROM tickets');
+    console.log(req)
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -77,6 +78,7 @@ export const cancelPurchaseHistory = async (req: Request, res: Response): Promis
 export const getOfficeTicketList = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await pool.query('SELECT * FROM read_office_ticket_amounts()');
+    console.log(req)
     res.json(result.rows);
   } catch (err) {
     console.error(err);

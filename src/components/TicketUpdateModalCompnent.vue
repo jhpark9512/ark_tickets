@@ -70,7 +70,6 @@ const columns: ColumnType[] = [
 
 const office = props.office;
 const open = ref<boolean>(false);
-const page = ref(1);
 const current = ref(1);
 const total = ref(0);
 const issuList = ref<TicketIssuList[]>([]); //테이블 데이터

@@ -4,7 +4,7 @@
             <div class="card-area">
                 <a-card style="border: 1px solid black;" :title="office" :bordered="false">
                     <h3>총합 : {{ totalTicketQuantity }}</h3>
-                    <p v-for="(office, index) in officeData" :key="index">
+                    <p v-for="(_, index) in officeData" :key="index">
                         {{ officeData[index].o_company_name }} : {{ officeData[index].o_ticket_quantity }}개
                     </p>
                 </a-card>

@@ -1,10 +1,5 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-interface AuthState {
-  isAuthenticated: boolean;
-  token: string | null;
-  role: string | null;
-}
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false);

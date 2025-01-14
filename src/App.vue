@@ -21,7 +21,6 @@
 
 <script lang="ts" setup>
 import NavigationBarComponent from './components/NavigationBarComponent.vue';
-import SideBarComponent from './components/SideBarComponent.vue';
 </script>
 <style scoped>
 .layout{

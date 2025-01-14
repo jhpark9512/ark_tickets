@@ -11,7 +11,7 @@
 
         <a-form-item>
           <a-radio-group v-model:value="form.selection" style="margin-bottom: 16px;">
-            <template v-for="(office, index) in officeData" :key="office.o_company_id">
+            <template v-for="(office) in officeData" :key="office.o_company_id">
             <a-radio :value="office.o_company_name">{{office.o_company_name}}</a-radio>
           </template>
           </a-radio-group>
@@ -49,7 +49,7 @@ const open = ref<boolean>(false);
 const confirmLoading = ref<boolean>(false);
 const form = ref<{ selection: string | null; input_quantity: number | null }>({ selection: null, input_quantity: null });
 const value = ref<Dayjs>(dayjs());
-const office = props.office;
+
 const onDateChange = (date: Dayjs) => {
   console.log(date.format('YYYY-MM-DD'))
 }
